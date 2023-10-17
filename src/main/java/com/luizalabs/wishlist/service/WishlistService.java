@@ -1,16 +1,16 @@
 package com.luizalabs.wishlist.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.luizalabs.wishlist.dto.ProductDto;
 import com.luizalabs.wishlist.exception.WishListException;
-import com.luizalabs.wishlist.model.Client;
 import com.luizalabs.wishlist.model.Product;
+import com.luizalabs.wishlist.model.User;
 import com.luizalabs.wishlist.model.Wishlist;
 import com.luizalabs.wishlist.repository.WishlistRepository;
 
@@ -18,71 +18,58 @@ import com.luizalabs.wishlist.repository.WishlistRepository;
 public class WishlistService {
 
     private WishlistRepository wishlistRepository;
-    private ClientService clientService;
     private ProductService productService;
 
     @Autowired
     public WishlistService(
             WishlistRepository wishlistRepository,
-            ClientService clientService,
             ProductService productService) {
         this.wishlistRepository = wishlistRepository;
-        this.clientService = clientService;
         this.productService = productService;
     }
 
-    public List<ProductDto> getItems(String clientId) {
-        List<Wishlist> wishlists = wishlistRepository.findByClientId(clientId);
-        List<ProductDto> productDtos = new ArrayList<>();
-        for (Wishlist wishList : wishlists) {
-            productDtos.add(productService.getProduct(wishList.getProduct()));
-        }
+    public List<ProductDto> getItems(User user) {
 
-        return productDtos;
+        List<Wishlist> wishlists = wishlistRepository.findByUser(user);
+        return wishlists.stream()
+                .map(wishlist -> productService.getProduct(wishlist.getProduct()))
+                .collect(Collectors.toList());
     }
 
-    public boolean isProduct(String clientId, String productId) {
-        return wishlistRepository.existsByClientIdAndProductId(clientId, productId);
+    public boolean isProduct(User user, String productId) {
+        return wishlistRepository.existsByUserAndProductId(user, productId);
     }
 
-    public Optional<Wishlist> getWishlistItem(String clientId, String productId) {
-        return wishlistRepository.findByClientIdAndProductId(clientId, productId);
+    public Optional<Wishlist> getWishlistItem(User user, String productId) {
+        return wishlistRepository.findByUserAndProductId(user, productId);
     }
 
-    public ProductDto getProductDetails(Wishlist wishlistItem) {
-        if (wishlistItem != null) {
-            Product product = wishlistItem.getProduct();
+    public ProductDto getProductDetails(Wishlist wishlist) {
+        if (wishlist != null) {
+            Product product = wishlist.getProduct();
             return productService.getProduct(product);
         } else {
             return null;
         }
     }
 
-    public void addProduct(String clientId, Product product) {
-        List<Wishlist> clientWishlist = wishlistRepository.findByClientId(clientId);
-        if (clientWishlist.size() >= 20) {
-            throw new WishListException("A Wishlist atingiu o limite máximo de 20 produtos.");
+    public void addProduct(Wishlist wishlist) {
+        User user = wishlist.getUser();
+        List<Wishlist> wishlists = wishlistRepository.findByUser(user);
+        if (wishlists.size() >= 20) {
+            throw new WishListException("The Wishlist has reached the maximum limit of 20 products.");
         }
 
-        Optional<Client> clientOptional = clientService.getClientById(clientId);
-
-        if (clientOptional.isPresent()) {
-            Client client = clientOptional.get();
-
-            Wishlist wishlistItem = new Wishlist(client, product);
-            wishlistRepository.save(wishlistItem);
-        } else {
-            throw new WishListException("Cliente não encontrado");
-        }
+        wishlistRepository.save(wishlist);
     }
 
-    public void removeProduct(String clientId, String productId) {
-        Optional<Wishlist> itemToRemove = wishlistRepository.findByClientIdAndProductId(clientId, productId);
+    public void removeProduct(User user, String productId) {
+        Optional<Wishlist> itemToRemove = wishlistRepository.findByUserAndProductId(user, productId);
         itemToRemove.ifPresent(wishlistRepository::delete);
     }
 
-    public void clearWishlist(String clientId) {
-        List<Wishlist> wishlists = wishlistRepository.findByClientId(clientId);
+    public void clearWishlist(User user) {
+        List<Wishlist> wishlists = wishlistRepository.findByUser(user);
         wishlists.forEach(wishlistRepository::delete);
     }
 
