@@ -95,6 +95,6 @@ Permite que um usuário faça login. O corpo da solicitação deve conter as cre
 
 
 Observação: Esta API Wishlist foi projetada para demonstrar as funcionalidades de uma lista de desejos. Embora a 
-arquitetura seja baseada em micro-serviços, optei por criar uma forma em que os usuários possam se cadastrar e fazer
-login para utilizar o serviço de Wishlist.
+arquitetura seja baseada em micro-serviços, como está nas orientações do projeto, optei por criar uma forma em que 
+os usuários possam se cadastrar e fazer login para utilizar o serviço de Wishlist.
 
