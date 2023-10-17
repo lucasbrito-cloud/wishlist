@@ -5,15 +5,15 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import com.luizalabs.wishlist.model.User;
 import com.luizalabs.wishlist.model.Wishlist;
 
-
 public interface WishlistRepository extends MongoRepository<Wishlist, String> {
-    List<Wishlist> findByClientId(String clientId);
+    List<Wishlist> findByUser(User user);
 
-    Optional<Wishlist> findByClientIdAndProductId(String clientId, String productId);
+    Optional<Wishlist> findByUserAndProductId(User user, String productId);
 
-    boolean existsByClientIdAndProductId(String clientId, String productId);
+    boolean existsByUserAndProductId(User user, String productId);
 
-    void deleteByClientIdAndProductId(String clientId, String productId);
+    void deleteByUserIdAndProductId(User user, String productId);
 }

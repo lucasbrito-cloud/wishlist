@@ -30,7 +30,7 @@ public class ProductController {
 
     /* Buscar produto por id */
     @GetMapping("/id/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable String id) {
+    public ResponseEntity<Product> getProductById(@PathVariable("id") String id) {
         Optional<Product> product = productService.getProductById(id);
 
         if (product.isPresent()) {
@@ -42,7 +42,7 @@ public class ProductController {
 
     /* Buscar produto por nome */
     @GetMapping("/name/{name}")
-    public ResponseEntity<Product> getProductByName(@PathVariable String name) {
+    public ResponseEntity<Product> getProductByName(@PathVariable("name") String name) {
         Product product = productService.getProductByName(name);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }

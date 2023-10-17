@@ -24,69 +24,43 @@ Para executar a aplicação, você pode utilizar o Maven. Abra o terminal e exec
 
 ## Configuração do Banco de Dados
 
-Para a aplicação Wishlist, foi utilizado um banco de dados na nuvem. O banco de dados é hospedado no serviço MongoDB Atlas. As
-informações do banco de dados estão na pasta "application.properties".
+A aplicação Wishlist utiliza um banco de dados na nuvem que é hospedado no serviço MongoDB Atlas. Ao iniciar a aplicação, 
+ela se conectará automaticamente ao cluster do MongoDB Atlas da Wishlist. As informações de conexão com o banco de dados 
+estão no arquivo 'application.properties', que está localizado na pasta resources.
 
 
 ## Endpoints da Wishlist
 
-### Adicionar Produto à Wishlist
-
-Endpoint: `POST /wishlist/add/{clientId}`
-Adiciona um produto à Wishlist de um cliente.
-
 ### Listar Produtos na Wishlist
 
-Endpoint: `GET /wishlist/{clientId}`
-Retorna a lista de produtos na Wishlist de um cliente.
-
-### Remover Produto da Wishlist
-
-Endpoint: `DELETE /wishlist/remove/{clientId}/{productId}`
-Remove um produto da Wishlist de um cliente.
+Endpoint: `GET /wishlist/{token}`
+Retorna a lista de produtos na Wishlist de um cliente
 
 ### Verificar se um Produto está na Wishlist
 
-Endpoint: `GET /wishlist/contains/{clientId}/{productId}`
+Endpoint: `GET /wishlist/contains/{token}/{productId}`
 Verifica se um produto específico está na Wishlist de um cliente.
 
 ### Detalhes do Produto na Wishlist
 
-Endpoint: `GET /wishlist/product/{clientId}/{productId}`
+Endpoint: `GET /wishlist/product/{token}/{productId}`
 Retorna os detalhes de um produto específico na Wishlist de um cliente.
-
-### Limpar Wishlist
-
-Endpoint: `DELETE /wishlist/clear/{clientId}`
-Remove todos os produtos da Wishlist de um cliente.
 
 ### Adicionar Produto à Wishlist
 
-Endpoint: `POST /wishlist/add/{clientId}`
-Adiciona um produto à Wishlist de um cliente.
+Endpoint: `POST /wishlist/add`
+Adiciona um produto a Wishlist do cliente. O RequestBody deve conter os detalhes do produto e o RequestParam deve conter o token 
+do usuário.
 
 ### Remover Produto da Wishlist
 
-Endpoint: `DELETE /wishlist/remove/{clientId}/{productId}`
+Endpoint: `DELETE /wishlist/remove/{token}/{productId}`
 Remove um produto da Wishlist de um cliente.
 
+### Limpar Wishlist
 
-## Endpoints de Clientes
-
-### Listar Todos os Clientes
-
-Endpoint: `GET /client/`
-Retorna a lista de todos os clientes registrados.
-
-### Buscar Cliente por ID
-
-Endpoint: `GET /client/id/{id}`
-Retorna um cliente específico com base no ID.
-
-### Buscar Cliente por Nome
-
-Endpoint: `GET /client/name/{name}`
-Retorna um cliente específico com base no nome.
+Endpoint: `DELETE /wishlist/clear/{token}`
+Remove todos os produtos da Wishlist de um cliente.
 
 
 ## Endpoints de Produtos
@@ -107,7 +81,20 @@ Endpoint: `GET /product/name/{name}`
 Retorna um produto específico com base no nome.
 
 
-Nota: A API da Wishlist foi projetada para demonstrar as funcionalidades de uma lista de desejos. Embora a arquitetura seja 
-baseada em micro-serviços, os dados de clientes e produtos foram mantidos fixos no banco de dados da aplicação. Isso foi 
-feito com o intuito de concentrar apenas no serviço da Wishlist, como foi dito nas Orientações do projeto.
+## Endpoints de Usuários
+
+### Cadastro de Usuário
+
+Endpoint: `POST /user/signup`
+Realiza o cadastro de um novo usuário. O corpo da solicitação deve conter os detalhes do usuário.
+
+### Login de Usuário
+
+Endpoint: `POST /user/signin`
+Permite que um usuário faça login. O corpo da solicitação deve conter as credenciais do usuário.
+
+
+Observação: Esta API Wishlist foi projetada para demonstrar as funcionalidades de uma lista de desejos. Embora a 
+arquitetura seja baseada em micro-serviços, como está nas orientações do projeto, optei por criar uma forma em que 
+os usuários possam se cadastrar e fazer login para utilizar o serviço de Wishlist.
 
